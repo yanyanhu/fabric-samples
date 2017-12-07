@@ -9,8 +9,8 @@ echo "|____/    |_|   /_/   \_\ |_| \_\   |_|  "
 echo
 echo "Build your first network (BYFN) end-to-end test"
 echo
-CHANNEL_NAME="$1"
-DELAY="$2"
+CHANNEL_NAME="${1:-mychannel}"
+DELAY="${2:-5}"
 : ${CHANNEL_NAME:="mychannel"}
 : ${TIMEOUT:="60"}
 COUNTER=1
