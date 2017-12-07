@@ -9,9 +9,9 @@
 .DS_Store
 .project
 
-first-network/channel-artifacts/*.tx
-first-network/channel-artifacts/*.block
-first-network/crypto-config/*
+#first-network/channel-artifacts/*.tx
+#first-network/channel-artifacts/*.block
+#first-network/crypto-config/*
 
 chaincode-docker-devmode/myc.block
 chaincode-docker-devmode/chaincode/sacc/sacc
