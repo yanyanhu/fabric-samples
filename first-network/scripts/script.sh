@@ -41,11 +41,23 @@ setGlobals () {
 		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
 		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
 		CORE_PEER_ADDRESS=peer0.org2.example.com:7051
-	else
+    elif [ $1 -eq 2 ] ; then
 		CORE_PEER_LOCALMSPID="Org3MSP"
 		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt
 		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/users/Admin@org3.example.com/msp
 		CORE_PEER_ADDRESS=peer0.org3.example.com:7051
+    elif [ $1 -eq 3 ] ; then
+		CORE_PEER_LOCALMSPID="Org4MSP"
+		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org4.example.com/peers/peer0.org4.example.com/tls/ca.crt
+		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org4.example.com/users/Admin@org4.example.com/msp
+		CORE_PEER_ADDRESS=peer0.org4.example.com:7051
+    elif [ $1 -eq 4 ] ; then
+		CORE_PEER_LOCALMSPID="Org5MSP"
+		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org5.example.com/peers/peer0.org5.example.com/tls/ca.crt
+		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org5.example.com/users/Admin@org5.example.com/msp
+		CORE_PEER_ADDRESS=peer0.org5.example.com:7051
+	else
+        echo "Incorret Peer Num"
 	fi
 
 	env |grep CORE
@@ -100,7 +112,7 @@ joinWithRetry () {
 }
 
 joinChannel () {
-	for ch in 0 1 2; do
+	for ch in 0 1 2 3 4; do
 		setGlobals $ch
 		joinWithRetry $ch
 		echo "===================== PEER$ch joined on the channel \"$CHANNEL_NAME\" ===================== "
@@ -126,9 +138,9 @@ instantiateChaincode () {
 	# while 'peer chaincode' command can get the orderer endpoint from the peer (if join was successful),
 	# lets supply it directly as we know it using the "-o" option
 	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
-		peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR	('Org1MSP.member','Org2MSP.member', 'Org3MSP.member')" >&log.txt
+		peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR	('Org1MSP.member','Org2MSP.member','Org3MSP.member','Org4MSP.member','Org5MSP.member')" >&log.txt
 	else
-		peer chaincode instantiate -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR	('Org1MSP.member','Org2MSP.member', 'Org3MSP.member')" >&log.txt
+		peer chaincode instantiate -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR	('Org1MSP.member','Org2MSP.member','Org3MSP.member','Org4MSP.member','Org5MSP.member')" >&log.txt
 	fi
 	res=$?
 	cat log.txt
@@ -198,18 +210,26 @@ echo "Updating anchor peers for org2..."
 updateAnchorPeers 1
 echo "Updating anchor peers for org3..."
 updateAnchorPeers 2
+echo "Updating anchor peers for org4..."
+updateAnchorPeers 3
+echo "Updating anchor peers for org5..."
+updateAnchorPeers 4
 
 ## Install chaincode on Peer0/Org1, Peer1/Org2 and Peer2/Org3
 echo "Installing chaincode on org1/peer0..."
 installChaincode 0
-echo "Install chaincode on org2/peer1..."
+echo "Installing chaincode on org2/peer0..."
 installChaincode 1
-echo "Install chaincode on org3/peer2..."
+echo "Installing chaincode on org3/peer0..."
 installChaincode 2
+echo "Installing chaincode on org4/peer0..."
+installChaincode 3
+echo "Installing chaincode on org5/peer0..."
+installChaincode 4
 
 #Instantiate chaincode on Peer2/Org3
-echo "Instantiating chaincode on org3/peer2..."
-instantiateChaincode 2
+echo "Instantiating chaincode on org5/peer0..."
+instantiateChaincode 4
 
 #Query on chaincode on Peer0/Org1
 echo "Querying chaincode on org1/peer0..."
@@ -219,9 +239,17 @@ chaincodeQuery 0 100
 echo "Sending invoke transaction on org1/peer0..."
 chaincodeInvoke 0
 
-#Query on chaincode on Peer1/Org2, check if the result is 90
-echo "Querying chaincode on org2/peer1..."
+#Query on chaincode on Peer0/Org2, check if the result is 90
+echo "Querying chaincode on org2/peer0..."
 chaincodeQuery 1 90
+
+#Query on chaincode on Peer0/Org3, check if the result is 90
+echo "Querying chaincode on org3/peer0..."
+chaincodeQuery 2 90
+
+#Query on chaincode on Peer0/Org4, check if the result is 90
+echo "Querying chaincode on org4/peer0..."
+chaincodeQuery 3 90
 
 echo
 echo "========= All GOOD, BYFN execution completed =========== "
