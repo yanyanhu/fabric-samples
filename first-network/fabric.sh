@@ -176,6 +176,10 @@ function replacePrivateKey () {
   PRIV_KEY=$(ls *_sk)
   cd "$CURRENT_DIR"
   sed $OPTS "s/CA2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+  cd crypto-config/peerOrganizations/org3.example.com/ca/
+  PRIV_KEY=$(ls *_sk)
+  cd "$CURRENT_DIR"
+  sed $OPTS "s/CA3_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
   # If MacOSX, remove the temporary backup of the docker-compose file
   if [ "$ARCH" == "Darwin" ]; then
     rm docker-compose-e2e.yamlt
@@ -269,7 +273,7 @@ function generateChannelArtifacts() {
   echo "##########################################################"
   # Note: For some unknown reason (at least for now) the block file can't be
   # named orderer.genesis.block or the orderer will fail to launch!
-  configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+  configtxgen -profile ThreeOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
   if [ "$?" -ne 0 ]; then
     echo "Failed to generate orderer genesis block..."
     exit 1
@@ -278,7 +282,7 @@ function generateChannelArtifacts() {
   echo "#################################################################"
   echo "### Generating channel configuration transaction 'channel.tx' ###"
   echo "#################################################################"
-  configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+  configtxgen -profile ThreeOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
   if [ "$?" -ne 0 ]; then
     echo "Failed to generate channel configuration transaction..."
     exit 1
@@ -288,7 +292,7 @@ function generateChannelArtifacts() {
   echo "#################################################################"
   echo "#######    Generating anchor peer update for Org1MSP   ##########"
   echo "#################################################################"
-  configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+  configtxgen -profile ThreeOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
   if [ "$?" -ne 0 ]; then
     echo "Failed to generate anchor peer update for Org1MSP..."
     exit 1
@@ -298,12 +302,24 @@ function generateChannelArtifacts() {
   echo "#################################################################"
   echo "#######    Generating anchor peer update for Org2MSP   ##########"
   echo "#################################################################"
-  configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
+  configtxgen -profile ThreeOrgsChannel -outputAnchorPeersUpdate \
   ./channel-artifacts/Org2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
   if [ "$?" -ne 0 ]; then
     echo "Failed to generate anchor peer update for Org2MSP..."
     exit 1
   fi
+
+  echo
+  echo "#################################################################"
+  echo "#######    Generating anchor peer update for Org3MSP   ##########"
+  echo "#################################################################"
+  configtxgen -profile ThreeOrgsChannel -outputAnchorPeersUpdate \
+  ./channel-artifacts/Org3MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org3MSP
+  if [ "$?" -ne 0 ]; then
+    echo "Failed to generate anchor peer update for Org3MSP..."
+    exit 1
+  fi
+
   echo
 }
 
@@ -349,6 +365,8 @@ if [ "$MODE" == "up" ]; then
   EXPMODE="Starting"
   elif [ "$MODE" == "down" ]; then
   EXPMODE="Stopping"
+  elif [ "$MODE" == "cleanup" ]; then
+  EXPMODE="Clearing"
   elif [ "$MODE" == "restart" ]; then
   EXPMODE="Restarting"
   elif [ "$MODE" == "generate" ]; then
@@ -372,7 +390,7 @@ fi
 #Create the network using docker compose
 if [ "${MODE}" == "up" ]; then
   networkUp
-  elif [ "${MODE}" == "down" ]; then ## Clear the network
+  elif [ "${MODE}" == "down" ]; then ## Shutdown the network
   networkDown
   elif [ "${MODE}" == "cleanup" ]; then ## Clear the network
   networkCleanup
