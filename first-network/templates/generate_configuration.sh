@@ -1,7 +1,8 @@
 #!/bin/bash
 
-ORG_AMOUNT=5
-PEER_PER_ORG=2
+ORG_AMOUNT=10
+PEER_PER_ORG=3
+PEER_INDEX_MAX=$(( PEER_PER_ORG - 1 ))
 
 
 # Generate docker-compose-cli.yaml
@@ -9,9 +10,9 @@ PEER_PER_ORG=2
 cat docker-compose-cli-basic.yaml > ../docker-compose-cli.yaml
 
 echo -e "#Peer list\n#" >> ../docker-compose-cli.yaml
-for ORG_INDEX in {1..5};
+for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
 do
-    for PEER_INDEX in {0..1};
+    for PEER_INDEX in $(eval echo "{0..$PEER_INDEX_MAX}");
     do
         ORG_NAME=org$ORG_INDEX
         PEER_NAME=peer$PEER_INDEX
@@ -25,9 +26,9 @@ cat docker-compose-couch-basic.yaml > ../docker-compose-couch.yaml
 
 echo -e "#CouchDB and peer list\n#" >> ../docker-compose-couch.yaml
 START_COUCHDB_PORT=11000
-for ORG_INDEX in {1..5};
+for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
 do
-    for PEER_INDEX in {0..1};
+    for PEER_INDEX in $(eval echo "{0..$PEER_INDEX_MAX}");
     do
         ORG_NAME=org$ORG_INDEX
         PEER_NAME=peer$PEER_INDEX
@@ -46,7 +47,7 @@ cat docker-compose-e2e-template-basic.yaml > ../docker-compose-e2e-template.yaml
 
 echo -e "#Peer and CA list\n#" >> ../docker-compose-e2e-template.yaml
 START_CA_PORT=12000
-for ORG_INDEX in {1..5};
+for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
 do
     # Generate CA configuration
     #
@@ -58,7 +59,7 @@ do
 
     # Generate Peer configuration
     #
-    for PEER_INDEX in {0..1};
+    for PEER_INDEX in $(eval echo "{0..$PEER_INDEX_MAX}");
     do
         ORG_NAME=org$ORG_INDEX
         PEER_NAME=peer$PEER_INDEX
@@ -74,9 +75,9 @@ cat base/docker-compose-base-basic.yaml > ../base/docker-compose-base.yaml
 echo -e "#Peer list\n#" >> ../base/docker-compose-base.yaml
 START_PEER_API_PORT=13000
 START_PEER_EVENTHUB_PORT=14000
-for ORG_INDEX in {1..5};
+for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
 do
-    for PEER_INDEX in {0..1};
+    for PEER_INDEX in $(eval echo "{0..$PEER_INDEX_MAX}");
     do
         ORG_NAME=org$ORG_INDEX
         PEER_NAME=peer$PEER_INDEX
@@ -95,7 +96,7 @@ done
 #
 cat configtx-basic.yaml > ../configtx.yaml
 
-for ORG_INDEX in {1..5};
+for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
 do
     _ORG_NAME=Org$ORG_INDEX
     ORG_NAME=org$ORG_INDEX
@@ -111,7 +112,7 @@ done
 #
 cat crypto-config-basic.yaml > ../crypto-config.yaml
 
-for ORG_INDEX in {1..5};
+for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
 do
     _ORG_NAME=Org$ORG_INDEX
     ORG_NAME=org$ORG_INDEX
