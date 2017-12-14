@@ -32,6 +32,47 @@ Profiles:
                     - *Org8
                     - *Org9
                     - *Org10
+                    - *Org11
+                    - *Org12
+                    - *Org13
+                    - *Org14
+                    - *Org15
+                    - *Org16
+                    - *Org17
+                    - *Org18
+                    - *Org19
+                    - *Org20
+                    - *Org21
+                    - *Org22
+                    - *Org23
+                    - *Org24
+                    - *Org25
+                    - *Org26
+                    - *Org27
+                    - *Org28
+                    - *Org29
+                    - *Org30
+                    - *Org31
+                    - *Org32
+                    - *Org33
+                    - *Org34
+                    - *Org35
+                    - *Org36
+                    - *Org37
+                    - *Org38
+                    - *Org39
+                    - *Org40
+                    - *Org41
+                    - *Org42
+                    - *Org43
+                    - *Org44
+                    - *Org45
+                    - *Org46
+                    - *Org47
+                    - *Org48
+                    - *Org49
+                    - *Org50
+
     OrgsChannel:
         Consortium: SampleConsortium
         Application:
@@ -47,6 +88,47 @@ Profiles:
                 - *Org8
                 - *Org9
                 - *Org10
+                - *Org11
+                - *Org12
+                - *Org13
+                - *Org14
+                - *Org15
+                - *Org16
+                - *Org17
+                - *Org18
+                - *Org19
+                - *Org20
+                - *Org21
+                - *Org22
+                - *Org23
+                - *Org24
+                - *Org25
+                - *Org26
+                - *Org27
+                - *Org28
+                - *Org29
+                - *Org30
+                - *Org31
+                - *Org32
+                - *Org33
+                - *Org34
+                - *Org35
+                - *Org36
+                - *Org37
+                - *Org38
+                - *Org39
+                - *Org40
+                - *Org41
+                - *Org42
+                - *Org43
+                - *Org44
+                - *Org45
+                - *Org46
+                - *Org47
+                - *Org48
+                - *Org49
+                - *Org50
+
 
 ################################################################################
 #
