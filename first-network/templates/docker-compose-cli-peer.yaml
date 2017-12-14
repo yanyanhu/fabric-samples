@@ -1,0 +1,8 @@
+  ${PEER_NAME}.${ORG_NAME}.example.com:
+    container_name: ${PEER_NAME}.${ORG_NAME}.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: ${PEER_NAME}.${ORG_NAME}.example.com
+    networks:
+      - byfn
+
