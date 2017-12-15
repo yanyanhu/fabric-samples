@@ -81,12 +81,13 @@ do
     do
         ORG_NAME=org$ORG_INDEX
         PEER_NAME=peer$PEER_INDEX
+        ANCHOR_PEER_NAME=peer0
         ORG_MSP_NAME=Org${ORG_INDEX}MSP
         PEER_API_PORT=$(( START_PEER_API_PORT + ( ORG_INDEX - 1 ) * PEER_PER_ORG + PEER_INDEX ))
         PEER_EVENTHUB_PORT=$(( START_PEER_EVENTHUB_PORT + ( ORG_INDEX - 1 ) * PEER_PER_ORG + PEER_INDEX ))
-        sed -e 's/${PEER_NAME}/'$PEER_NAME'/g' -e 's/${ORG_NAME}/'$ORG_NAME'/g' \
-            -e 's/${ORG_MSP_NAME}/'$ORG_MSP_NAME'/g' -e 's/${PEER_API_PORT}/'$PEER_API_PORT'/g' \
-            -e 's/${PEER_EVENTHUB_PORT}/'$PEER_EVENTHUB_PORT'/g' \
+        sed -e 's/${PEER_NAME}/'$PEER_NAME'/g' -e 's/${ANCHOR_PEER_NAME}/'$ANCHOR_PEER_NAME'/g' \
+            -e 's/${ORG_NAME}/'$ORG_NAME'/g' -e 's/${ORG_MSP_NAME}/'$ORG_MSP_NAME'/g' \
+            -e 's/${PEER_API_PORT}/'$PEER_API_PORT'/g' -e 's/${PEER_EVENTHUB_PORT}/'$PEER_EVENTHUB_PORT'/g' \
             base/docker-compose-base-peer.yaml >> ../base/docker-compose-base.yaml
     done
 done
