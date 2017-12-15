@@ -94,7 +94,17 @@ done
 
 # Generate configtx.yaml
 #
-cat configtx-basic.yaml > ../configtx.yaml
+cat configtx-basic-part1.yaml > ../configtx.yaml
+for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
+do
+    echo "                    - *Org$ORG_INDEX" >> ../configtx.yaml
+done
+cat configtx-basic-part2.yaml >> ../configtx.yaml
+for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
+do
+    echo "                - *Org$ORG_INDEX" >> ../configtx.yaml
+done
+cat configtx-basic-part3.yaml >> ../configtx.yaml
 
 for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
 do
