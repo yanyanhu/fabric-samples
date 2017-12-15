@@ -31,69 +31,13 @@ verifyResult () {
 
 setGlobals () {
 
-	if [ $1 -eq 0 ] ; then
-		CORE_PEER_LOCALMSPID="Org1MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org1.example.com:7051
-    elif [ $1 -eq 1 ] ; then
-		CORE_PEER_LOCALMSPID="Org2MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org2.example.com:7051
-    elif [ $1 -eq 2 ] ; then
-		CORE_PEER_LOCALMSPID="Org3MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/users/Admin@org3.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org3.example.com:7051
-    elif [ $1 -eq 3 ] ; then
-		CORE_PEER_LOCALMSPID="Org4MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org4.example.com/peers/peer0.org4.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org4.example.com/users/Admin@org4.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org4.example.com:7051
-    elif [ $1 -eq 4 ] ; then
-		CORE_PEER_LOCALMSPID="Org5MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org5.example.com/peers/peer0.org5.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org5.example.com/users/Admin@org5.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org5.example.com:7051
-    elif [ $1 -eq 5 ] ; then
-		CORE_PEER_LOCALMSPID="Org6MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org6.example.com/peers/peer0.org6.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org6.example.com/users/Admin@org6.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org6.example.com:7051
-    elif [ $1 -eq 6 ] ; then
-		CORE_PEER_LOCALMSPID="Org7MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org7.example.com/peers/peer0.org7.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org7.example.com/users/Admin@org7.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org7.example.com:7051
-    elif [ $1 -eq 7 ] ; then
-		CORE_PEER_LOCALMSPID="Org8MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org8.example.com/peers/peer0.org8.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org8.example.com/users/Admin@org8.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org8.example.com:7051
-    elif [ $1 -eq 8 ] ; then
-		CORE_PEER_LOCALMSPID="Org9MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org9.example.com/peers/peer0.org9.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org9.example.com/users/Admin@org9.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org9.example.com:7051
-    elif [ $1 -eq 9 ] ; then
-		CORE_PEER_LOCALMSPID="Org10MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org10.example.com/peers/peer0.org10.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org10.example.com/users/Admin@org10.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org10.example.com:7051
-    elif [ $1 -eq 19 ] ; then
-		CORE_PEER_LOCALMSPID="Org20MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org20.example.com/peers/peer0.org20.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org20.example.com/users/Admin@org20.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org20.example.com:7051
-    elif [ $1 -eq 49 ] ; then
-		CORE_PEER_LOCALMSPID="Org50MSP"
-		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org50.example.com/peers/peer0.org50.example.com/tls/ca.crt
-		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org50.example.com/users/Admin@org50.example.com/msp
-		CORE_PEER_ADDRESS=peer0.org50.example.com:7051
-	else
-        echo "Incorret Peer Num"
-	fi
+    PEER_INDEX=$1
+    ORG_INDEX=$(( PEER_INDEX + 1 ))
+    PEER_NUM=0
+    CORE_PEER_LOCALMSPID="Org${ORG_INDEX}MSP"
+    CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org${ORG_INDEX}.example.com/peers/peer${PEER_NUM}.org${ORG_INDEX}.example.com/tls/ca.crt
+    CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org${ORG_INDEX}.example.com/users/Admin@org${ORG_INDEX}.example.com/msp
+    CORE_PEER_ADDRESS=peer${PEER_NUM}.org${ORG_INDEX}.example.com:7051
 
 	env |grep CORE
 }
@@ -147,7 +91,7 @@ joinWithRetry () {
 }
 
 joinChannel () {
-	for ch in 0 1 2 3 4 5 6 7 8 9 19; do
+	for ch in {0..49}; do
 		setGlobals $ch
 		joinWithRetry $ch
 		echo "===================== PEER$ch joined on the channel \"$CHANNEL_NAME\" ===================== "
@@ -241,52 +185,20 @@ echo "Having all peers join the channel..."
 joinChannel
 
 ## Set the anchor peers for each org in the channel
-echo "Updating anchor peers for org1..."
-updateAnchorPeers 0
-echo "Updating anchor peers for org2..."
-updateAnchorPeers 1
-echo "Updating anchor peers for org3..."
-updateAnchorPeers 2
-echo "Updating anchor peers for org4..."
-updateAnchorPeers 3
-echo "Updating anchor peers for org5..."
-updateAnchorPeers 4
-echo "Updating anchor peers for org6..."
-updateAnchorPeers 5
-echo "Updating anchor peers for org7..."
-updateAnchorPeers 6
-echo "Updating anchor peers for org8..."
-updateAnchorPeers 7
-echo "Updating anchor peers for org9..."
-updateAnchorPeers 8
-echo "Updating anchor peers for org10..."
-updateAnchorPeers 9
-echo "Updating anchor peers for org20..."
-updateAnchorPeers 19
+for i in {0..49};
+do
+  ORG_INDEX=$(( i + 1 ))
+  echo "Updating anchor peers for org$ORG_INDEX..."
+  updateAnchorPeers $i
+done
 
 ## Install chaincode on Peer0/Org1, Peer1/Org2 and Peer2/Org3
-echo "Installing chaincode on org1/peer0..."
-installChaincode 0
-echo "Installing chaincode on org2/peer0..."
-installChaincode 1
-echo "Installing chaincode on org3/peer0..."
-installChaincode 2
-echo "Installing chaincode on org4/peer0..."
-installChaincode 3
-echo "Installing chaincode on org5/peer0..."
-installChaincode 4
-echo "Installing chaincode on org6/peer0..."
-installChaincode 5
-echo "Installing chaincode on org7/peer0..."
-installChaincode 6
-echo "Installing chaincode on org8/peer0..."
-installChaincode 7
-echo "Installing chaincode on org9/peer0..."
-installChaincode 8
-echo "Installing chaincode on org10/peer0..."
-installChaincode 9
-echo "Installing chaincode on org20/peer0..."
-installChaincode 19
+for i in {0..49};
+do
+  ORG_INDEX=$(( i + 1 ))
+  echo "Installing chaincode on org$ORG_INDEX/peer0..."
+  installChaincode $i
+done
 
 #Instantiate chaincode on Peer2/Org3
 echo "Instantiating chaincode on org10/peer0..."
@@ -300,49 +212,13 @@ chaincodeQuery 0 100
 echo "Sending invoke transaction on org5/peer0..."
 chaincodeInvoke 4
 
-#Query on chaincode on Peer0/Org1, check if the result is 90
-echo "Querying chaincode on org1/peer0..."
-chaincodeQuery 0 90
-
-#Query on chaincode on Peer0/Org2, check if the result is 90
-echo "Querying chaincode on org2/peer0..."
-chaincodeQuery 1 90
-
-#Query on chaincode on Peer0/Org3, check if the result is 90
-echo "Querying chaincode on org3/peer0..."
-chaincodeQuery 2 90
-
-#Query on chaincode on Peer0/Org4, check if the result is 90
-echo "Querying chaincode on org4/peer0..."
-chaincodeQuery 3 90
-
-#Query on chaincode on Peer0/Org5, check if the result is 90
-echo "Querying chaincode on org5/peer0..."
-chaincodeQuery 4 90
-
-#Query on chaincode on Peer0/Org6, check if the result is 90
-echo "Querying chaincode on org6/peer0..."
-chaincodeQuery 5 90
-
-#Query on chaincode on Peer0/Org7, check if the result is 90
-echo "Querying chaincode on org7/peer0..."
-chaincodeQuery 6 90
-
-#Query on chaincode on Peer0/Org8, check if the result is 90
-echo "Querying chaincode on org8/peer0..."
-chaincodeQuery 7 90
-
-#Query on chaincode on Peer0/Org9, check if the result is 90
-echo "Querying chaincode on org9/peer0..."
-chaincodeQuery 8 90
-
-#Query on chaincode on Peer0/Org10, check if the result is 90
-echo "Querying chaincode on org10/peer0..."
-chaincodeQuery 9 90
-
-#Query on chaincode on Peer0/Org20, check if the result is 90
-echo "Querying chaincode on org20/peer0..."
-chaincodeQuery 19 90
+for i in {0..49};
+do
+  ORG_INDEX=$(( i + 1 ))
+  #Query on chaincode on Peer0/OrgN, check if the result is 90
+  echo "Querying chaincode on org${ORG_INDEX}/peer0..."
+  chaincodeQuery $i 90
+done
 
 echo
 echo "========= All GOOD, BYFN execution completed =========== "
