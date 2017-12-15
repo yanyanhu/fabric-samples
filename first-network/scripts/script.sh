@@ -81,7 +81,16 @@ setGlobals () {
 		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org10.example.com/peers/peer0.org10.example.com/tls/ca.crt
 		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org10.example.com/users/Admin@org10.example.com/msp
 		CORE_PEER_ADDRESS=peer0.org10.example.com:7051
-
+    elif [ $1 -eq 19 ] ; then
+		CORE_PEER_LOCALMSPID="Org20MSP"
+		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org20.example.com/peers/peer0.org20.example.com/tls/ca.crt
+		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org20.example.com/users/Admin@org20.example.com/msp
+		CORE_PEER_ADDRESS=peer0.org20.example.com:7051
+    elif [ $1 -eq 49 ] ; then
+		CORE_PEER_LOCALMSPID="Org50MSP"
+		CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org50.example.com/peers/peer0.org50.example.com/tls/ca.crt
+		CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org50.example.com/users/Admin@org50.example.com/msp
+		CORE_PEER_ADDRESS=peer0.org50.example.com:7051
 	else
         echo "Incorret Peer Num"
 	fi
@@ -138,7 +147,7 @@ joinWithRetry () {
 }
 
 joinChannel () {
-	for ch in 0 1 2 3 4 5 6 7 8 9; do
+	for ch in 0 1 2 3 4 5 6 7 8 9 19; do
 		setGlobals $ch
 		joinWithRetry $ch
 		echo "===================== PEER$ch joined on the channel \"$CHANNEL_NAME\" ===================== "
@@ -252,6 +261,8 @@ echo "Updating anchor peers for org9..."
 updateAnchorPeers 8
 echo "Updating anchor peers for org10..."
 updateAnchorPeers 9
+echo "Updating anchor peers for org20..."
+updateAnchorPeers 19
 
 ## Install chaincode on Peer0/Org1, Peer1/Org2 and Peer2/Org3
 echo "Installing chaincode on org1/peer0..."
@@ -274,6 +285,8 @@ echo "Installing chaincode on org9/peer0..."
 installChaincode 8
 echo "Installing chaincode on org10/peer0..."
 installChaincode 9
+echo "Installing chaincode on org20/peer0..."
+installChaincode 19
 
 #Instantiate chaincode on Peer2/Org3
 echo "Instantiating chaincode on org10/peer0..."
@@ -327,6 +340,9 @@ chaincodeQuery 8 90
 echo "Querying chaincode on org10/peer0..."
 chaincodeQuery 9 90
 
+#Query on chaincode on Peer0/Org20, check if the result is 90
+echo "Querying chaincode on org20/peer0..."
+chaincodeQuery 19 90
 
 echo
 echo "========= All GOOD, BYFN execution completed =========== "

@@ -20,30 +20,18 @@ function replacePrivateKey () {
   # actual values of the private key file names for the two CAs.
   CURRENT_DIR=$PWD
 
-  cd crypto-config/peerOrganizations/org1.example.com/ca/
-  PRIV_KEY=$(ls *_sk)
-  cd "$CURRENT_DIR"
-  sed $OPTS "s/CA1_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-
-  cd crypto-config/peerOrganizations/org2.example.com/ca/
-  PRIV_KEY=$(ls *_sk)
-  cd "$CURRENT_DIR"
-  sed $OPTS "s/CA2_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-
-  cd crypto-config/peerOrganizations/org3.example.com/ca/
-  PRIV_KEY=$(ls *_sk)
-  cd "$CURRENT_DIR"
-  sed $OPTS "s/CA3_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-
-  cd crypto-config/peerOrganizations/org4.example.com/ca/
-  PRIV_KEY=$(ls *_sk)
-  cd "$CURRENT_DIR"
-  sed $OPTS "s/CA4_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
-
-  cd crypto-config/peerOrganizations/org5.example.com/ca/
-  PRIV_KEY=$(ls *_sk)
-  cd "$CURRENT_DIR"
-  sed $OPTS "s/CA5_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+  for ORG_INDEX in {1..20};
+  do
+    for PEER_INDEX in {0..1};
+    do
+      ORG_NAME=org$ORG_INDEX
+      CA_INDEX=${ORG_INDEX}
+      cd crypto-config/peerOrganizations/$ORG_NAME.example.com/ca/
+      PRIV_KEY=$(ls *_sk)
+      cd "$CURRENT_DIR"
+      sed $OPTS "s/CA${CA_INDEX}_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+    done
+  done
 
   # If MacOSX, remove the temporary backup of the docker-compose file
   if [ "$ARCH" == "Darwin" ]; then
@@ -153,59 +141,19 @@ function generateChannelArtifacts() {
     exit 1
   fi
 
-  echo
-  echo "#################################################################"
-  echo "#######    Generating anchor peer update for Org1MSP   ##########"
-  echo "#################################################################"
-  configtxgen -profile OrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
-  if [ "$?" -ne 0 ]; then
-    echo "Failed to generate anchor peer update for Org1MSP..."
-    exit 1
-  fi
-
-  echo
-  echo "#################################################################"
-  echo "#######    Generating anchor peer update for Org2MSP   ##########"
-  echo "#################################################################"
-  configtxgen -profile OrgsChannel -outputAnchorPeersUpdate \
-  ./channel-artifacts/Org2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
-  if [ "$?" -ne 0 ]; then
-    echo "Failed to generate anchor peer update for Org2MSP..."
-    exit 1
-  fi
-
-  echo
-  echo "#################################################################"
-  echo "#######    Generating anchor peer update for Org3MSP   ##########"
-  echo "#################################################################"
-  configtxgen -profile OrgsChannel -outputAnchorPeersUpdate \
-  ./channel-artifacts/Org3MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org3MSP
-  if [ "$?" -ne 0 ]; then
-    echo "Failed to generate anchor peer update for Org3MSP..."
-    exit 1
-  fi
-
-  echo
-  echo "#################################################################"
-  echo "#######    Generating anchor peer update for Org4MSP   ##########"
-  echo "#################################################################"
-  configtxgen -profile OrgsChannel -outputAnchorPeersUpdate \
-  ./channel-artifacts/Org4MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org4MSP
-  if [ "$?" -ne 0 ]; then
-    echo "Failed to generate anchor peer update for Org4MSP..."
-    exit 1
-  fi
-
-  echo
-  echo "#################################################################"
-  echo "#######    Generating anchor peer update for Org5MSP   ##########"
-  echo "#################################################################"
-  configtxgen -profile OrgsChannel -outputAnchorPeersUpdate \
-  ./channel-artifacts/Org5MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org5MSP
-  if [ "$?" -ne 0 ]; then
-    echo "Failed to generate anchor peer update for Org5MSP..."
-    exit 1
-  fi
+  for ORG_INDEX in {1..20};
+  do
+    ORG_MSP_NAME=Org${ORG_INDEX}MSP
+    echo
+    echo "#################################################################"
+    echo "#######    Generating anchor peer update for $ORG_MSP_NAME   ##########"
+    echo "#################################################################"
+    configtxgen -profile OrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/${ORG_MSP_NAME}anchors.tx -channelID $CHANNEL_NAME -asOrg ${ORG_MSP_NAME}
+    if [ "$?" -ne 0 ]; then
+      echo "Failed to generate anchor peer update for ${ORG_MSP_NAME}..."
+      exit 1
+    fi
+  done
 
   echo
 }

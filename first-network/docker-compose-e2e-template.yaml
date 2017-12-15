@@ -8,7 +8,17 @@ version: '2'
 networks:
   byfn:
 services:
-  ca0:
+  orderer.example.com:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.example.com
+    container_name: orderer.example.com
+    networks:
+      - byfn
+
+#Peer and CA list
+#
+  ca1:
     image: hyperledger/fabric-ca
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
@@ -17,87 +27,11 @@ services:
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
       - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY
     ports:
-      - "7054:7054"
+      - "12000:7054"
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerOrg1
-    networks:
-      - byfn
-
-  ca1:
-    image: hyperledger/fabric-ca
-    environment:
-      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca-org2
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY
-    ports:
-      - "8054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY -b admin:adminpw -d'
-    volumes:
-      - ./crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
-    container_name: ca_peerOrg2
-    networks:
-      - byfn
-
-  ca2:
-    image: hyperledger/fabric-ca
-    environment:
-      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca-org3
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org3.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA3_PRIVATE_KEY
-    ports:
-      - "8054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org3.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA3_PRIVATE_KEY -b admin:adminpw -d'
-    volumes:
-      - ./crypto-config/peerOrganizations/org3.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
-    container_name: ca_peerOrg3
-    networks:
-      - byfn
-
-  ca3:
-    image: hyperledger/fabric-ca
-    environment:
-      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca-org4
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org4.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA4_PRIVATE_KEY
-    ports:
-      - "9054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org4.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA4_PRIVATE_KEY -b admin:adminpw -d'
-    volumes:
-      - ./crypto-config/peerOrganizations/org4.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
-    container_name: ca_peerOrg4
-    networks:
-      - byfn
-
-  ca4:
-    image: hyperledger/fabric-ca
-    environment:
-      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-      - FABRIC_CA_SERVER_CA_NAME=ca-org5
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org5.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA5_PRIVATE_KEY
-    ports:
-      - "10054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org5.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA5_PRIVATE_KEY -b admin:adminpw -d'
-    volumes:
-      - ./crypto-config/peerOrganizations/org5.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
-    container_name: ca_peerOrg5
-    networks:
-      - byfn
-
-  orderer.example.com:
-    extends:
-      file:   base/docker-compose-base.yaml
-      service: orderer.example.com
-    container_name: orderer.example.com
     networks:
       - byfn
 
@@ -109,11 +43,61 @@ services:
     networks:
       - byfn
 
+  peer1.org1.example.com:
+    container_name: peer1.org1.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org1.example.com
+    networks:
+      - byfn
+
+  ca2:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org2
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY
+    ports:
+      - "12001:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg2
+    networks:
+      - byfn
+
   peer0.org2.example.com:
     container_name: peer0.org2.example.com
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.org2.example.com
+    networks:
+      - byfn
+
+  peer1.org2.example.com:
+    container_name: peer1.org2.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org2.example.com
+    networks:
+      - byfn
+
+  ca3:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org3
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org3.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA3_PRIVATE_KEY
+    ports:
+      - "12002:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA3_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg3
     networks:
       - byfn
 
@@ -125,11 +109,61 @@ services:
     networks:
       - byfn
 
+  peer1.org3.example.com:
+    container_name: peer1.org3.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org3.example.com
+    networks:
+      - byfn
+
+  ca4:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org4
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org4.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA4_PRIVATE_KEY
+    ports:
+      - "12003:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA4_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg4
+    networks:
+      - byfn
+
   peer0.org4.example.com:
     container_name: peer0.org4.example.com
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.org4.example.com
+    networks:
+      - byfn
+
+  peer1.org4.example.com:
+    container_name: peer1.org4.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org4.example.com
+    networks:
+      - byfn
+
+  ca5:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org5
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org5.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA5_PRIVATE_KEY
+    ports:
+      - "12004:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA5_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg5
     networks:
       - byfn
 
@@ -140,3 +174,507 @@ services:
       service: peer0.org5.example.com
     networks:
       - byfn
+
+  peer1.org5.example.com:
+    container_name: peer1.org5.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org5.example.com
+    networks:
+      - byfn
+
+  ca6:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org6
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org6.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA6_PRIVATE_KEY
+    ports:
+      - "12005:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA6_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg6
+    networks:
+      - byfn
+
+  peer0.org6.example.com:
+    container_name: peer0.org6.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org6.example.com
+    networks:
+      - byfn
+
+  peer1.org6.example.com:
+    container_name: peer1.org6.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org6.example.com
+    networks:
+      - byfn
+
+  ca7:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org7
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org7.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA7_PRIVATE_KEY
+    ports:
+      - "12006:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA7_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg7
+    networks:
+      - byfn
+
+  peer0.org7.example.com:
+    container_name: peer0.org7.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org7.example.com
+    networks:
+      - byfn
+
+  peer1.org7.example.com:
+    container_name: peer1.org7.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org7.example.com
+    networks:
+      - byfn
+
+  ca8:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org8
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org8.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA8_PRIVATE_KEY
+    ports:
+      - "12007:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA8_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg8
+    networks:
+      - byfn
+
+  peer0.org8.example.com:
+    container_name: peer0.org8.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org8.example.com
+    networks:
+      - byfn
+
+  peer1.org8.example.com:
+    container_name: peer1.org8.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org8.example.com
+    networks:
+      - byfn
+
+  ca9:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org9
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org9.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA9_PRIVATE_KEY
+    ports:
+      - "12008:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA9_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg9
+    networks:
+      - byfn
+
+  peer0.org9.example.com:
+    container_name: peer0.org9.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org9.example.com
+    networks:
+      - byfn
+
+  peer1.org9.example.com:
+    container_name: peer1.org9.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org9.example.com
+    networks:
+      - byfn
+
+  ca10:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org10
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org10.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA10_PRIVATE_KEY
+    ports:
+      - "12009:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA10_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg10
+    networks:
+      - byfn
+
+  peer0.org10.example.com:
+    container_name: peer0.org10.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org10.example.com
+    networks:
+      - byfn
+
+  peer1.org10.example.com:
+    container_name: peer1.org10.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org10.example.com
+    networks:
+      - byfn
+
+  ca11:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org11
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org11.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA11_PRIVATE_KEY
+    ports:
+      - "12010:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA11_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg11
+    networks:
+      - byfn
+
+  peer0.org11.example.com:
+    container_name: peer0.org11.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org11.example.com
+    networks:
+      - byfn
+
+  peer1.org11.example.com:
+    container_name: peer1.org11.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org11.example.com
+    networks:
+      - byfn
+
+  ca12:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org12
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org12.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA12_PRIVATE_KEY
+    ports:
+      - "12011:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA12_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg12
+    networks:
+      - byfn
+
+  peer0.org12.example.com:
+    container_name: peer0.org12.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org12.example.com
+    networks:
+      - byfn
+
+  peer1.org12.example.com:
+    container_name: peer1.org12.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org12.example.com
+    networks:
+      - byfn
+
+  ca13:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org13
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org13.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA13_PRIVATE_KEY
+    ports:
+      - "12012:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA13_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg13
+    networks:
+      - byfn
+
+  peer0.org13.example.com:
+    container_name: peer0.org13.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org13.example.com
+    networks:
+      - byfn
+
+  peer1.org13.example.com:
+    container_name: peer1.org13.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org13.example.com
+    networks:
+      - byfn
+
+  ca14:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org14
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org14.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA14_PRIVATE_KEY
+    ports:
+      - "12013:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA14_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg14
+    networks:
+      - byfn
+
+  peer0.org14.example.com:
+    container_name: peer0.org14.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org14.example.com
+    networks:
+      - byfn
+
+  peer1.org14.example.com:
+    container_name: peer1.org14.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org14.example.com
+    networks:
+      - byfn
+
+  ca15:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org15
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org15.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA15_PRIVATE_KEY
+    ports:
+      - "12014:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA15_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg15
+    networks:
+      - byfn
+
+  peer0.org15.example.com:
+    container_name: peer0.org15.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org15.example.com
+    networks:
+      - byfn
+
+  peer1.org15.example.com:
+    container_name: peer1.org15.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org15.example.com
+    networks:
+      - byfn
+
+  ca16:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org16
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org16.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA16_PRIVATE_KEY
+    ports:
+      - "12015:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA16_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg16
+    networks:
+      - byfn
+
+  peer0.org16.example.com:
+    container_name: peer0.org16.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org16.example.com
+    networks:
+      - byfn
+
+  peer1.org16.example.com:
+    container_name: peer1.org16.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org16.example.com
+    networks:
+      - byfn
+
+  ca17:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org17
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org17.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA17_PRIVATE_KEY
+    ports:
+      - "12016:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA17_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg17
+    networks:
+      - byfn
+
+  peer0.org17.example.com:
+    container_name: peer0.org17.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org17.example.com
+    networks:
+      - byfn
+
+  peer1.org17.example.com:
+    container_name: peer1.org17.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org17.example.com
+    networks:
+      - byfn
+
+  ca18:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org18
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org18.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA18_PRIVATE_KEY
+    ports:
+      - "12017:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA18_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg18
+    networks:
+      - byfn
+
+  peer0.org18.example.com:
+    container_name: peer0.org18.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org18.example.com
+    networks:
+      - byfn
+
+  peer1.org18.example.com:
+    container_name: peer1.org18.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org18.example.com
+    networks:
+      - byfn
+
+  ca19:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org19
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org19.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA19_PRIVATE_KEY
+    ports:
+      - "12018:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA19_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg19
+    networks:
+      - byfn
+
+  peer0.org19.example.com:
+    container_name: peer0.org19.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org19.example.com
+    networks:
+      - byfn
+
+  peer1.org19.example.com:
+    container_name: peer1.org19.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org19.example.com
+    networks:
+      - byfn
+
+  ca20:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org20
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org20.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA20_PRIVATE_KEY
+    ports:
+      - "12019:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA20_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrg20
+    networks:
+      - byfn
+
+  peer0.org20.example.com:
+    container_name: peer0.org20.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org20.example.com
+    networks:
+      - byfn
+
+  peer1.org20.example.com:
+    container_name: peer1.org20.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org20.example.com
+    networks:
+      - byfn
+

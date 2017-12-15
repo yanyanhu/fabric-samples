@@ -27,6 +27,22 @@ Profiles:
                     - *Org3
                     - *Org4
                     - *Org5
+                    - *Org6
+                    - *Org7
+                    - *Org8
+                    - *Org9
+                    - *Org10
+                    - *Org11
+                    - *Org12
+                    - *Org13
+                    - *Org14
+                    - *Org15
+                    - *Org16
+                    - *Org17
+                    - *Org18
+                    - *Org19
+                    - *Org20
+
     OrgsChannel:
         Consortium: SampleConsortium
         Application:
@@ -37,6 +53,82 @@ Profiles:
                 - *Org3
                 - *Org4
                 - *Org5
+                - *Org6
+                - *Org7
+                - *Org8
+                - *Org9
+                - *Org10
+                - *Org11
+                - *Org12
+                - *Org13
+                - *Org14
+                - *Org15
+                - *Org16
+                - *Org17
+                - *Org18
+                - *Org19
+                - *Org20
+
+################################################################################
+#
+#   SECTION: Orderer
+#
+#   - This section defines the values to encode into a config transaction or
+#   genesis block for orderer related parameters
+#
+################################################################################
+Orderer: &OrdererDefaults
+
+    # Orderer Type: The orderer implementation to start
+    # Available types are "solo" and "kafka"
+    OrdererType: solo
+
+    Addresses:
+        - orderer.example.com:7050
+
+    # Batch Timeout: The amount of time to wait before creating a batch
+    BatchTimeout: 2s
+
+    # Batch Size: Controls the number of messages batched into a block
+    BatchSize:
+
+        # Max Message Count: The maximum number of messages to permit in a batch
+        MaxMessageCount: 10
+
+        # Absolute Max Bytes: The absolute maximum number of bytes allowed for
+        # the serialized messages in a batch.
+        AbsoluteMaxBytes: 99 MB
+
+        # Preferred Max Bytes: The preferred maximum number of bytes allowed for
+        # the serialized messages in a batch. A message larger than the preferred
+        # max bytes will result in a batch larger than preferred max bytes.
+        PreferredMaxBytes: 512 KB
+
+    Kafka:
+        # Brokers: A list of Kafka brokers to which the orderer connects
+        # NOTE: Use IP:port notation
+        Brokers:
+            - 127.0.0.1:9092
+
+    # Organizations is the list of orgs which are defined as participants on
+    # the orderer side of the network
+    Organizations:
+
+
+################################################################################
+#
+#   SECTION: Application
+#
+#   - This section defines the values to encode into a config transaction or
+#   genesis block for application related parameters
+#
+################################################################################
+Application: &ApplicationDefaults
+
+    # Organizations is the list of orgs which are defined as participants on
+    # the application side of the network
+    Organizations:
+
 
 ################################################################################
 #
@@ -146,62 +238,258 @@ Organizations:
             - Host: peer0.org5.example.com
               Port: 7051
 
+    - &Org6
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org6MSP
 
-################################################################################
-#
-#   SECTION: Orderer
-#
-#   - This section defines the values to encode into a config transaction or
-#   genesis block for orderer related parameters
-#
-################################################################################
-Orderer: &OrdererDefaults
+        # ID to load the MSP definition as
+        ID: Org6MSP
 
-    # Orderer Type: The orderer implementation to start
-    # Available types are "solo" and "kafka"
-    OrdererType: solo
+        MSPDir: crypto-config/peerOrganizations/org6.example.com/msp
 
-    Addresses:
-        - orderer.example.com:7050
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org6.example.com
+              Port: 7051
 
-    # Batch Timeout: The amount of time to wait before creating a batch
-    BatchTimeout: 2s
+    - &Org7
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org7MSP
 
-    # Batch Size: Controls the number of messages batched into a block
-    BatchSize:
+        # ID to load the MSP definition as
+        ID: Org7MSP
 
-        # Max Message Count: The maximum number of messages to permit in a batch
-        MaxMessageCount: 10
+        MSPDir: crypto-config/peerOrganizations/org7.example.com/msp
 
-        # Absolute Max Bytes: The absolute maximum number of bytes allowed for
-        # the serialized messages in a batch.
-        AbsoluteMaxBytes: 99 MB
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org7.example.com
+              Port: 7051
 
-        # Preferred Max Bytes: The preferred maximum number of bytes allowed for
-        # the serialized messages in a batch. A message larger than the preferred
-        # max bytes will result in a batch larger than preferred max bytes.
-        PreferredMaxBytes: 512 KB
+    - &Org8
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org8MSP
 
-    Kafka:
-        # Brokers: A list of Kafka brokers to which the orderer connects
-        # NOTE: Use IP:port notation
-        Brokers:
-            - 127.0.0.1:9092
+        # ID to load the MSP definition as
+        ID: Org8MSP
 
-    # Organizations is the list of orgs which are defined as participants on
-    # the orderer side of the network
-    Organizations:
+        MSPDir: crypto-config/peerOrganizations/org8.example.com/msp
 
-################################################################################
-#
-#   SECTION: Application
-#
-#   - This section defines the values to encode into a config transaction or
-#   genesis block for application related parameters
-#
-################################################################################
-Application: &ApplicationDefaults
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org8.example.com
+              Port: 7051
 
-    # Organizations is the list of orgs which are defined as participants on
-    # the application side of the network
-    Organizations:
+    - &Org9
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org9MSP
+
+        # ID to load the MSP definition as
+        ID: Org9MSP
+
+        MSPDir: crypto-config/peerOrganizations/org9.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org9.example.com
+              Port: 7051
+
+    - &Org10
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org10MSP
+
+        # ID to load the MSP definition as
+        ID: Org10MSP
+
+        MSPDir: crypto-config/peerOrganizations/org10.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org10.example.com
+              Port: 7051
+
+    - &Org11
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org11MSP
+
+        # ID to load the MSP definition as
+        ID: Org11MSP
+
+        MSPDir: crypto-config/peerOrganizations/org11.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org11.example.com
+              Port: 7051
+
+    - &Org12
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org12MSP
+
+        # ID to load the MSP definition as
+        ID: Org12MSP
+
+        MSPDir: crypto-config/peerOrganizations/org12.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org12.example.com
+              Port: 7051
+
+    - &Org13
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org13MSP
+
+        # ID to load the MSP definition as
+        ID: Org13MSP
+
+        MSPDir: crypto-config/peerOrganizations/org13.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org13.example.com
+              Port: 7051
+
+    - &Org14
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org14MSP
+
+        # ID to load the MSP definition as
+        ID: Org14MSP
+
+        MSPDir: crypto-config/peerOrganizations/org14.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org14.example.com
+              Port: 7051
+
+    - &Org15
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org15MSP
+
+        # ID to load the MSP definition as
+        ID: Org15MSP
+
+        MSPDir: crypto-config/peerOrganizations/org15.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org15.example.com
+              Port: 7051
+
+    - &Org16
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org16MSP
+
+        # ID to load the MSP definition as
+        ID: Org16MSP
+
+        MSPDir: crypto-config/peerOrganizations/org16.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org16.example.com
+              Port: 7051
+
+    - &Org17
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org17MSP
+
+        # ID to load the MSP definition as
+        ID: Org17MSP
+
+        MSPDir: crypto-config/peerOrganizations/org17.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org17.example.com
+              Port: 7051
+
+    - &Org18
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org18MSP
+
+        # ID to load the MSP definition as
+        ID: Org18MSP
+
+        MSPDir: crypto-config/peerOrganizations/org18.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org18.example.com
+              Port: 7051
+
+    - &Org19
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org19MSP
+
+        # ID to load the MSP definition as
+        ID: Org19MSP
+
+        MSPDir: crypto-config/peerOrganizations/org19.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org19.example.com
+              Port: 7051
+
+    - &Org20
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: Org20MSP
+
+        # ID to load the MSP definition as
+        ID: Org20MSP
+
+        MSPDir: crypto-config/peerOrganizations/org20.example.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.org20.example.com
+              Port: 7051
+
