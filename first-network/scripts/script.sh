@@ -201,16 +201,16 @@ do
 done
 
 #Instantiate chaincode on Peer2/Org3
-echo "Instantiating chaincode on org10/peer0..."
-instantiateChaincode 9
+echo "Instantiating chaincode on org1/peer0..."
+instantiateChaincode 0
 
 #Query on chaincode on Peer0/Org1
 echo "Querying chaincode on org1/peer0..."
 chaincodeQuery 0 100
 
 #Invoke on chaincode on Peer0/Org1
-echo "Sending invoke transaction on org5/peer0..."
-chaincodeInvoke 4
+echo "Sending invoke transaction on org1/peer0..."
+chaincodeInvoke 0
 
 for i in {0..49};
 do
