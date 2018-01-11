@@ -30,6 +30,7 @@ function replacePrivateKey () {
       PRIV_KEY=$(ls *_sk)
       cd "$CURRENT_DIR"
       sed $OPTS "s/CA${CA_INDEX}_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-e2e.yaml
+      sed $OPTS "s/CA${CA_INDEX}_PRIVATE_KEY/${PRIV_KEY}/g" docker-compose-cli.yaml
     done
   done
 

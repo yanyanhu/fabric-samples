@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ORG_AMOUNT=20
-PEER_PER_ORG=2
+PEER_PER_ORG=1
 PEER_INDEX_MAX=$(( PEER_PER_ORG - 1 ))
 
 
@@ -9,9 +9,21 @@ PEER_INDEX_MAX=$(( PEER_PER_ORG - 1 ))
 #
 cat docker-compose-cli-basic.yaml > ../docker-compose-cli.yaml
 
-echo -e "#Peer list\n#" >> ../docker-compose-cli.yaml
+echo -e "#Peer and CA list\n#" >> ../docker-compose-cli.yaml
+START_CA_PORT=12000
 for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
 do
+    # Generate CA configuration
+    # Note: comment the following code if ca is not required for cli template
+    #
+    CA_INDEX=${ORG_INDEX}
+    CA_PORT=$(( START_CA_PORT + ( ORG_INDEX - 1 ) ))
+    sed -e 's/${ORG_INDEX}/'$ORG_INDEX'/g' -e 's/${CA_INDEX}/'$CA_INDEX'/g' \
+        -e 's/${CA_PORT}/'$CA_PORT'/g' \
+        docker-compose-e2e-template-ca.yaml >> ../docker-compose-cli.yaml
+
+    # Generate Peer configuration
+    #
     for PEER_INDEX in $(eval echo "{0..$PEER_INDEX_MAX}");
     do
         ORG_NAME=org$ORG_INDEX
