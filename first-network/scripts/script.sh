@@ -91,13 +91,22 @@ joinWithRetry () {
 }
 
 joinChannel () {
-	for ch in {0..49}; do
+	for ch in {0..2}; do
 		setGlobals $ch
 		joinWithRetry $ch
 		echo "===================== PEER$ch joined on the channel \"$CHANNEL_NAME\" ===================== "
 		sleep $DELAY
 		echo
 	done
+}
+
+joinChannel2 () {
+    PEER=$1
+	setGlobals $PEER
+	joinWithRetry $PEER
+	echo "===================== PEER$PEER joined on the channel \"$CHANNEL_NAME\" ===================== "
+	sleep $DELAY
+	echo
 }
 
 installChaincode () {
@@ -185,7 +194,7 @@ echo "Having all peers join the channel..."
 joinChannel
 
 ## Set the anchor peers for each org in the channel
-for i in {0..49};
+for i in {0..2};
 do
   ORG_INDEX=$(( i + 1 ))
   echo "Updating anchor peers for org$ORG_INDEX..."
@@ -193,7 +202,7 @@ do
 done
 
 ## Install chaincode on Peer0/Org1, Peer1/Org2 and Peer2/Org3
-for i in {0..49};
+for i in {0..2};
 do
   ORG_INDEX=$(( i + 1 ))
   echo "Installing chaincode on org$ORG_INDEX/peer0..."
@@ -212,13 +221,20 @@ chaincodeQuery 0 100
 echo "Sending invoke transaction on org1/peer0..."
 chaincodeInvoke 0
 
-for i in {0..49};
+for i in {0..2};
 do
   ORG_INDEX=$(( i + 1 ))
   #Query on chaincode on Peer0/OrgN, check if the result is 90
   echo "Querying chaincode on org${ORG_INDEX}/peer0..."
   chaincodeQuery $i 90
 done
+
+## Let the new added Peer0/Org3 join mychannel and do query and invoke
+#joinChannel2 3
+#installChaincode 3
+#chaincodeQuery 3 90
+#chaincodeInvoke 3
+#chaincodeQuery 0 80
 
 echo
 echo "========= All GOOD, BYFN execution completed =========== "

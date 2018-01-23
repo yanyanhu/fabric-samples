@@ -10,7 +10,7 @@ $configtxlator start &
 Execute the following command in `cli` container to retrieve the current configuration block on the application channel named mychannel.
 ```
 $peer channel fetch config config_block.pb -o orderer.example.com:7050 -c mychannel --tls --cafile \
-     ./crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+     /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 
 $ls config_block.pb
 ```
@@ -84,7 +84,7 @@ $echo '{"payload":{"header":{"channel_header":{"channel_id":"mychannel", "type":
 ```
 
 ## Create the new config transaction
-# Encode a configuration update message into a protobuf format
+### Encode a configuration update message into a protobuf format
 ```
 $curl -X POST --data-binary @config_update_as_envelope.json http://127.0.0.1:7059/protolator/encode/common.Envelope > config_update_as_envelope.pb
 ```
@@ -157,7 +157,7 @@ $fabric.sh -m up
 ## Let new peer join the channel and update anchor peer
 Enter cli container to run peer CMD and perform the following operations:
 - Let peer0.org7 join mychannel
-- Update the anchor peer or Org7
 - Install chaincode in peer0.org7
+Note: Anchor peer of Org7 has been updated during the update of channel configuration. So no need to do it again here.
 
 Now you can query or invoke chaincode by talking to this new peer0.org7 using Org7 Admin credential.
