@@ -150,3 +150,6 @@ done
 PEER_INDEX_LIMIT=$(( PEER_PER_ORG - 1 ))
 sed -e 's/${ORG_AMOUNT}/'$ORG_AMOUNT'/g' -e 's/${PEER_INDEX_LIMIT}/'$PEER_INDEX_LIMIT'/g' \
     generate_artifacts_template.sh > ../generate_artifacts.sh
+
+# Generate .env file required by docker-compose
+echo "COMPOSE_PROJECT_NAME=net" > ../.env
