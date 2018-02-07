@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ORG_AMOUNT=20
+ORG_AMOUNT=3
 PEER_PER_ORG=1
 PEER_INDEX_MAX=$(( PEER_PER_ORG - 1 ))
 
@@ -103,6 +103,8 @@ do
             base/docker-compose-base-peer.yaml >> ../base/docker-compose-base.yaml
     done
 done
+
+cat base/peer-base.yaml > ../base/peer-base.yaml
 
 
 # Generate configtx.yaml
