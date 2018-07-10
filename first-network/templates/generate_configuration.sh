@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ORG_AMOUNT=3
+ORG_AMOUNT=5
 PEER_PER_ORG=1
 PEER_INDEX_MAX=$(( PEER_PER_ORG - 1 ))
 
@@ -109,18 +109,7 @@ cat base/peer-base.yaml > ../base/peer-base.yaml
 
 # Generate configtx.yaml
 #
-cat configtx-basic-part1.yaml > ../configtx.yaml
-for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
-do
-    echo "                    - *Org$ORG_INDEX" >> ../configtx.yaml
-done
-cat configtx-basic-part2.yaml >> ../configtx.yaml
-for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
-do
-    echo "                - *Org$ORG_INDEX" >> ../configtx.yaml
-done
-cat configtx-basic-part3.yaml >> ../configtx.yaml
-
+cat configtx-basic-part3.yaml > ../configtx.yaml
 for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
 do
     _ORG_NAME=Org$ORG_INDEX
@@ -130,6 +119,17 @@ do
     sed -e 's/${ANCHOR_PEER_NAME}/'$ANCHOR_PEER_NAME'/g' -e 's/${ORG_NAME}/'$ORG_NAME'/g' \
         -e 's/${_ORG_NAME}/'$_ORG_NAME'/g' -e 's/${ORG_MSP_NAME}/'$ORG_MSP_NAME'/g' \
         configtx-org.yaml >> ../configtx.yaml
+done
+
+cat configtx-basic-part1.yaml >> ../configtx.yaml
+for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
+do
+    echo "                    - *Org$ORG_INDEX" >> ../configtx.yaml
+done
+cat configtx-basic-part2.yaml >> ../configtx.yaml
+for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
+do
+    echo "                - *Org$ORG_INDEX" >> ../configtx.yaml
 done
 
 
