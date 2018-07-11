@@ -153,11 +153,21 @@ chaincodeQuery () {
      sleep $DELAY
      echo "Attempting to Query PEER$PEER ...$(($(date +%s)-starttime)) secs"
      peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}' >&log.txt
-     test $? -eq 0 && VALUE=$(cat log.txt | awk '/Query Result/ {print $NF}')
-     test "$VALUE" = "$2" && let rc=0
+#     test $? -eq 0 && VALUE=$(cat log.txt | awk '/Query Result/ {print $NF}')
+#     test "$VALUE" = "$2" && let rc=0
+     res=$?
+     set +x
+     test $res -eq 0 && VALUE=$(cat log.txt | awk '/Query Result/ {print $NF}')
+     test "$VALUE" = "$EXPECTED_RESULT" && let rc=0
+     # removed the string "Query Result" from peer chaincode query command
+     # result. as a result, have to support both options until the change
+     # is merged.
+     test $rc -ne 0 && VALUE=$(cat log.txt | egrep '^[0-9]+$')
+     test "$VALUE" = "$EXPECTED_RESULT" && let rc=0
+
   done
   echo
-  cat log.txt
+  #cat log.txt
   if test $rc -eq 0 ; then
 	echo "===================== Query on PEER$PEER on channel '$CHANNEL_NAME' is successful ===================== "
   else
@@ -213,7 +223,7 @@ done
 echo "Instantiating chaincode on org1/peer0..."
 instantiateChaincode 0
 
-#Query on chaincode on Peer0/Org1
+Query on chaincode on Peer0/Org1
 echo "Querying chaincode on org1/peer0..."
 chaincodeQuery 0 100
 
