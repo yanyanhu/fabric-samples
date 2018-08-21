@@ -157,11 +157,11 @@ chaincodeQuery () {
      sleep $DELAY
      echo "Attempting to Query PEER$PEER ...$(($(date +%s)-starttime)) secs"
      peer chaincode query -C $CHANNEL_NAME -n $CHAINCODE_NAME -c '{"Args":["query","a"]}' >&log.txt
-     test $? -eq 0 && VALUE=$(cat log.txt | awk '/Query Result/ {print $NF}')
+     cat log.txt
+     test $? -eq 0 && VALUE=$(tail -1 log.txt)
      test "$VALUE" = "$2" && let rc=0
   done
   echo
-  cat log.txt
   if test $rc -eq 0 ; then
 	echo "===================== Query on PEER$PEER on channel '$CHANNEL_NAME' is successful ===================== "
   else
@@ -190,49 +190,49 @@ chaincodeInvoke () {
 }
 
 
-### Create channel
-#echo "Creating channel..."
-#createChannel
-#
-### Join all the peers to the channel
-#echo "Having all peers join the channel..."
-#joinChannel
-#
-### Set the anchor peers for each org in the channel
-#for i in {0..5};
-#do
-#  ORG_INDEX=$(( i + 1 ))
-#  echo "Updating anchor peers for org$ORG_INDEX..."
-#  updateAnchorPeers $i
-#done
+## Create channel
+echo "Creating channel..."
+createChannel
 
-### Install chaincode on Peer0/Org1, Peer1/Org2 and Peer2/Org3
-#for i in {0..5};
-#do
-#  ORG_INDEX=$(( i + 1 ))
-#  echo "Installing chaincode on org$ORG_INDEX/peer0..."
-#  installChaincode $i
-#done
+## Join all the peers to the channel
+echo "Having all peers join the channel..."
+joinChannel
+
+## Set the anchor peers for each org in the channel
+for i in {0..5};
+do
+  ORG_INDEX=$(( i + 1 ))
+  echo "Updating anchor peers for org$ORG_INDEX..."
+  updateAnchorPeers $i
+done
+
+## Install chaincode on Peer0/Org1, Peer1/Org2 and Peer2/Org3
+for i in {0..5};
+do
+  ORG_INDEX=$(( i + 1 ))
+  echo "Installing chaincode on org$ORG_INDEX/peer0..."
+  installChaincode $i
+done
 
 #Instantiate chaincode on Peer0/Org1
 echo "Instantiating chaincode on org1/peer0..."
 instantiateChaincode 0
 
-##Query on chaincode on Peer0/Org1
-#echo "Querying chaincode on org1/peer0..."
-#chaincodeQuery 0 100
-#
-##Invoke on chaincode on Peer0/Org1
-#echo "Sending invoke transaction on org1/peer0..."
-#chaincodeInvoke 0
-#
-#for i in {0..5};
-#do
-#  ORG_INDEX=$(( i + 1 ))
-#  #Query on chaincode on Peer0/OrgN, check if the result is 90
-#  echo "Querying chaincode on org${ORG_INDEX}/peer0..."
-#  chaincodeQuery $i 90
-#done
+#Query on chaincode on Peer0/Org1
+echo "Querying chaincode on org1/peer0..."
+chaincodeQuery 0 100
+
+#Invoke on chaincode on Peer0/Org1
+echo "Sending invoke transaction on org1/peer0..."
+chaincodeInvoke 0
+
+for i in {0..1};
+do
+  ORG_INDEX=$(( i + 1 ))
+  #Query on chaincode on Peer0/OrgN, check if the result is 90
+  echo "Querying chaincode on org${ORG_INDEX}/peer0..."
+  chaincodeQuery $i 90
+done
 
 echo
 echo "========= All GOOD, BYFN execution completed =========== "
