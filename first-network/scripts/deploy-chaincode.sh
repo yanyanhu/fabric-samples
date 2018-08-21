@@ -18,6 +18,10 @@ CHAINCODE_PATH="${4:-chaincode_example02}"
 COUNTER=1
 MAX_RETRY=5
 ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+#FABRIC_HOST=${FABRIC_HOST:-"payment-devops01.sl.cloud9.ibm.com"}
+#ORDER_ENDPOINT=$FABRIC_HOST:7050
+#START_PEER_API_PORT=13000
+ORDER_ENDPOINT=orderer.example.com:7050
 
 echo "Channel name : "$CHANNEL_NAME
 
@@ -33,13 +37,15 @@ verifyResult () {
 
 setGlobals () {
 
-    PEER_INDEX=$1
-    ORG_INDEX=$(( PEER_INDEX + 1 ))
-    PEER_NUM=0
-    CORE_PEER_LOCALMSPID="Org${ORG_INDEX}MSP"
-    CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org${ORG_INDEX}.example.com/peers/peer${PEER_NUM}.org${ORG_INDEX}.example.com/tls/ca.crt
-    CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org${ORG_INDEX}.example.com/users/Admin@org${ORG_INDEX}.example.com/msp
+    export PEER_INDEX=$1
+    export ORG_INDEX=$(( PEER_INDEX + 1 ))
+    export PEER_NUM=0
+    export CORE_PEER_LOCALMSPID="Org${ORG_INDEX}MSP"
+    export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org${ORG_INDEX}.example.com/peers/peer${PEER_NUM}.org${ORG_INDEX}.example.com/tls/ca.crt
+    export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org${ORG_INDEX}.example.com/users/Admin@org${ORG_INDEX}.example.com/msp
     CORE_PEER_ADDRESS=peer${PEER_NUM}.org${ORG_INDEX}.example.com:7051
+    #export PEER_API_PORT=$(( START_PEER_API_PORT + PEER_INDEX ))
+    #export CORE_PEER_ADDRESS=$FABRIC_HOST:$PEER_API_PORT
 
 	env |grep CORE
 }
@@ -47,10 +53,10 @@ setGlobals () {
 createChannel() {
 	setGlobals 0
 
-  if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
-		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx >&log.txt
+    if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+		peer channel create -o $ORDER_ENDPOINT -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx >&log.txt
 	else
-		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+		peer channel create -o $ORDER_ENDPOINT -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls $CORE_PEER_TLS_ENABLED --ordererTLSHostnameOverride orderer.example.com --cafile $ORDERER_CA >&log.txt
 	fi
 	res=$?
 	cat log.txt
@@ -60,13 +66,13 @@ createChannel() {
 }
 
 updateAnchorPeers() {
-  PEER=$1
-  setGlobals $PEER
+    PEER=$1
+    setGlobals $PEER
 
-  if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
-		peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx >&log.txt
+    if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+		peer channel update -o $ORDER_ENDPOINT -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx >&log.txt
 	else
-		peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+		peer channel update -o $ORDER_ENDPOINT -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls $CORE_PEER_TLS_ENABLED --ordererTLSHostnameOverride orderer.example.com --cafile $ORDERER_CA >&log.txt
 	fi
 	res=$?
 	cat log.txt
@@ -78,7 +84,11 @@ updateAnchorPeers() {
 
 ## Sometimes Join takes time hence RETRY at least for 5 times
 joinWithRetry () {
-	peer channel join -b $CHANNEL_NAME.block  >&log.txt
+    if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+	    peer channel join -b $CHANNEL_NAME.block --tls $CORE_PEER_TLS_ENABLED --ordererTLSHostnameOverride orderer.example.com >&log.txt
+	else
+	    peer channel join -b $CHANNEL_NAME.block  >&log.txt
+    fi
 	res=$?
 	cat log.txt
 	if [ $res -ne 0 -a $COUNTER -lt $MAX_RETRY ]; then
@@ -93,7 +103,7 @@ joinWithRetry () {
 }
 
 joinChannel () {
-	for ch in {0..19}; do
+	for ch in {0..5}; do
 		setGlobals $ch
 		joinWithRetry $ch
 		echo "===================== PEER$ch joined on the channel \"$CHANNEL_NAME\" ===================== "
@@ -119,11 +129,12 @@ instantiateChaincode () {
 	# while 'peer chaincode' command can get the orderer endpoint from the peer (if join was successful),
 	# lets supply it directly as we know it using the "-o" option
 	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
-                echo "Non-TLS"
-                peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n $CHAINCODE_NAME -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR('Org1MSP.member','Org2MSP.member','Org3MSP.member','Org4MSP.member','Org5MSP.member','Org6MSP.member','Org7MSP.member','Org8MSP.member', OR(Org9MSP.member', 'Org10MSP.member'))" >&log.txt
+        echo "Non-TLS"
+        peer chaincode instantiate -o $ORDER_ENDPOINT -C $CHANNEL_NAME -n $CHAINCODE_NAME -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR('Org1MSP.member','Org2MSP.member','Org3MSP.member','Org4MSP.member','Org5MSP.member','Org6MSP.member')" --collections-config $GOPATH/src/github.com/hyperledger/fabric/examples/chaincode/go/private-data.json >&log.txt
 	else
-                echo "TLS"
-		peer chaincode instantiate -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n $CHAINCODE_NAME -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR('Org1MSP.member','Org2MSP.member','Org3MSP.member','Org4MSP.member','Org5MSP.member','Org6MSP.member','Org7MSP.member','Org8MSP.member', OR('Org9MSP.member', 'Org10MSP.member'))" >&log.txt
+        echo "TLS"
+        #peer chaincode instantiate -o $ORDER_ENDPOINT --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n $CHAINCODE_NAME -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR('Org1MSP.member','Org2MSP.member','Org3MSP.member','Org4MSP.member','Org5MSP.member','Org6MSP.member')"  >&log.txt
+        peer chaincode instantiate -o $ORDER_ENDPOINT --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n $CHAINCODE_NAME -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR('Org1MSP.member','Org2MSP.member','Org3MSP.member','Org4MSP.member','Org5MSP.member','Org6MSP.member')" --collections-config $GOPATH/src/github.com/hyperledger/fabric/examples/chaincode/go/private-data.json >&log.txt
 	fi
 	res=$?
 	cat log.txt
@@ -178,6 +189,7 @@ chaincodeInvoke () {
 	echo
 }
 
+
 ### Create channel
 #echo "Creating channel..."
 #createChannel
@@ -187,22 +199,22 @@ chaincodeInvoke () {
 #joinChannel
 #
 ### Set the anchor peers for each org in the channel
-#for i in {0..19};
+#for i in {0..5};
 #do
 #  ORG_INDEX=$(( i + 1 ))
 #  echo "Updating anchor peers for org$ORG_INDEX..."
 #  updateAnchorPeers $i
 #done
 
-## Install chaincode on Peer0/Org1, Peer1/Org2 and Peer2/Org3
-for i in {0..19};
-do
-  ORG_INDEX=$(( i + 1 ))
-  echo "Installing chaincode on org$ORG_INDEX/peer0..."
-  installChaincode $i
-done
+### Install chaincode on Peer0/Org1, Peer1/Org2 and Peer2/Org3
+#for i in {0..5};
+#do
+#  ORG_INDEX=$(( i + 1 ))
+#  echo "Installing chaincode on org$ORG_INDEX/peer0..."
+#  installChaincode $i
+#done
 
-#Instantiate chaincode on Peer2/Org3
+#Instantiate chaincode on Peer0/Org1
 echo "Instantiating chaincode on org1/peer0..."
 instantiateChaincode 0
 
@@ -214,7 +226,7 @@ instantiateChaincode 0
 #echo "Sending invoke transaction on org1/peer0..."
 #chaincodeInvoke 0
 #
-#for i in {0..19};
+#for i in {0..5};
 #do
 #  ORG_INDEX=$(( i + 1 ))
 #  #Query on chaincode on Peer0/OrgN, check if the result is 90

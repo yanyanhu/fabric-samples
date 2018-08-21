@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ORG_AMOUNT=5
+ORG_AMOUNT=6
 PEER_PER_ORG=1
 PEER_INDEX_MAX=$(( PEER_PER_ORG - 1 ))
 

@@ -3,4 +3,6 @@
         Consortium: SampleConsortium
         Application:
             <<: *ApplicationDefaults
+            Capabilities:
+              <<: *ApplicationCapabilities
             Organizations:
