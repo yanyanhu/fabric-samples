@@ -5,11 +5,11 @@ PEER_PER_ORG=1
 PEER_INDEX_MAX=$(( PEER_PER_ORG - 1 ))
 
 
-# Generate docker-compose-cli.yaml
+# Generate docker-compose-cli-template.yaml
 #
-cat docker-compose-cli-basic.yaml > ../docker-compose-cli.yaml
+cat docker-compose-cli-template-basic.yaml > ../docker-compose-cli-template.yaml
 
-echo -e "#Peer and CA list\n#" >> ../docker-compose-cli.yaml
+echo -e "#Peer and CA list\n#" >> ../docker-compose-cli-template.yaml
 START_CA_PORT=12000
 for ORG_INDEX in $(eval echo "{1..$ORG_AMOUNT}");
 do
@@ -20,7 +20,7 @@ do
     CA_PORT=$(( START_CA_PORT + ( ORG_INDEX - 1 ) ))
     sed -e 's/${ORG_INDEX}/'$ORG_INDEX'/g' -e 's/${CA_INDEX}/'$CA_INDEX'/g' \
         -e 's/${CA_PORT}/'$CA_PORT'/g' \
-        docker-compose-e2e-template-ca.yaml >> ../docker-compose-cli.yaml
+        docker-compose-e2e-template-ca.yaml >> ../docker-compose-cli-template.yaml
 
     # Generate Peer configuration
     #
@@ -28,7 +28,7 @@ do
     do
         ORG_NAME=org$ORG_INDEX
         PEER_NAME=peer$PEER_INDEX
-        sed -e 's/${PEER_NAME}/'$PEER_NAME'/g' -e 's/${ORG_NAME}/'$ORG_NAME'/g' docker-compose-cli-e2e-peer.yaml >> ../docker-compose-cli.yaml
+        sed -e 's/${PEER_NAME}/'$PEER_NAME'/g' -e 's/${ORG_NAME}/'$ORG_NAME'/g' docker-compose-cli-e2e-peer.yaml >> ../docker-compose-cli-template.yaml
     done
 done
 

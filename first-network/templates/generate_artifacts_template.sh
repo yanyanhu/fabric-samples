@@ -14,6 +14,7 @@ function replacePrivateKey () {
   fi
 
   # Copy the template to the file that will be modified to add the private key
+  cp docker-compose-cli-template.yaml docker-compose-cli.yaml
   cp docker-compose-e2e-template.yaml docker-compose-e2e.yaml
 
   # The next steps will replace the template's contents with the
@@ -36,7 +37,7 @@ function replacePrivateKey () {
 
   # If MacOSX, remove the temporary backup of the docker-compose file
   if [ "$ARCH" == "Darwin" ]; then
-    rm docker-compose-e2e.yamlt
+    rm docker-compose-e2e.yaml
   fi
 }
 
